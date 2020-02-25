@@ -8,22 +8,20 @@ class CPU:
     def __init__(self):
         """Construct a new CPU."""
         self.ram=[0b00000000]*256
-        self.registers={0b00000000:0b00000000,
-                        0b00000001:0b00000000
-                        }
         self.PC=0b00000000   # * `PC`: Program Counter, address of the currently executing instruction
         self.MAR=0b00000000  # * `MAR`: Memory Address Register, holds the memory address we're reading or writing
         self.MDR=0b00000000  # * `MDR`: Memory Data Register, holds the value to write or the value just read
         self.IR=0b00000000   # * `IR`: Instruction Register, contains a copy of the currently executing instruction
         self.FL=0b00000000   # * `FL`: Flags, see below
-        # self.R0=0b00000000
-        # self.R1=0b00000000
-        # self.R2=0b00000000
-        # self.R3=0b00000000
-        # self.R4=0b00000000
-        # self.R5=0b00000000   # * R5 is reserved as the interrupt mask (IM)
-        # self.R6=0b00000000   # * R6 is reserved as the interrupt status (IS)
-        # self.R7=0b00000000   # * R7 is reserved as the stack pointer (SP)
+        R0=0b00000000
+        R1=0b00000001
+        R2=0b00000010
+        R3=0b00000011
+        R4=0b00000100
+        R5=0b00000101   # * R5 is reserved as the interrupt mask (IM)
+        R6=0b00000110   # * R6 is reserved as the interrupt status (IS)
+        R7=0b00000111   # * R7 is reserved as the stack pointer (SP)
+        self.registers=[0]*8
         
     def ram_read(self):
         self.MDR=self.ram[self.MAR]
@@ -40,8 +38,8 @@ class CPU:
         BEEJ=0b00011111
         LDI=0b10000010
         PRN=0b01000111
-        #REGISTRS
-        R0=0b00000000
+        MUL=0b10100010
+
         # For now, we've just hardcoded a program:
 
         # program = [
@@ -131,31 +129,32 @@ class CPU:
             if self.IR==0b00011111:
                 #BEEJ
                 print("Beej!")
-                # self.PC+=1
             elif self.IR==0b10000010:
                 #LDI
                 self.MAR=self.PC+1
                 self.ram_read()
                 # print("RAM",self.PC,self.ram[self.PC],self.ram[self.PC+1],self.ram[self.PC+2])
                 operand_a=self.MDR
-
                 self.MAR=self.PC+2
                 self.ram_read()
                 operand_b=self.MDR
-
                 self.registers[operand_a]=operand_b
                 # print("REG",operand_a,operand_b,self.registers)
-
-                # self.PC+=3
             elif self.IR==0b01000111:
                 #PRN
                 self.MAR=self.PC+1
                 self.ram_read()
                 operand_a=self.MDR 
-
                 print(self.registers[operand_a])
-
-                # self.PC+=2             
+            elif self.IR==0b10100010:
+                #MUL
+                self.MAR=self.PC+1
+                self.ram_read()
+                operand_a=self.MDR 
+                self.MAR=self.PC+2
+                self.ram_read()
+                operand_b=self.MDR 
+                self.registers[operand_a]=self.registers[operand_a]*self.registers[operand_b]
             elif self.IR==0b00000001:
                 sys.exit(0)
             else:
