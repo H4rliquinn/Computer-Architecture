@@ -46,7 +46,7 @@ class CPU:
 
         # program = [
         #     # From print8.ls8
-        #     0b00011111, #Beej
+        #     0b00011111, # Beej
         #     0b10000010, # LDI R0,8
         #     0b00000000,
         #     0b00001000,
@@ -54,20 +54,44 @@ class CPU:
         #     0b00000000,
         #     0b00000001, # HLT
         # ]
+        # program2 = [
+        #     BEEJ,
+        #     LDI,
+        #     R0,
+        #     8,
+        #     PRN,
+        #     R0,
+        #     HLT,
+        # ]
+        
+        # print(sys.argv)
+        mem_pointer=0
+        if len(sys.argv)!=2:
+            print("Error: No Filename")
+            sys.exit(1)
+        try:
+            with open(sys.argv[1]) as f:
+                for line in f:
+                    # print(line)
+                    comment_split=line.split("#")
+                    value=comment_split[0].strip()
+                    # print(value)
+                    if value=='':
+                        continue
 
-        program = [
-            BEEJ,
-            LDI,
-            R0,
-            8,
-            PRN,
-            R0,
-            HLT,
-        ]
+                    num=int(value,2)
+                    # num=bin(num)
+                    # print(f"{num:08}:{num}")
+                    self.ram[mem_pointer]=num
+                    mem_pointer+=1
+            # print("MEM",self.ram)
+        except FileNotFoundError:
+            print("File Not Found")
+            sys.exit(2)
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address+= 1
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address+= 1
 
 
     def alu(self, op, reg_a, reg_b):

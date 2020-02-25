@@ -7,30 +7,7 @@ SAVE=4 #Save to register
 PRINT_REGISTER=5 #Print val in registers
 ADD=6 #Add 2 registers
 
-memory=[
-    # PRINT_BEEJ,
-    # SAVE,
-    # 65,
-    # 2,
-    # SAVE,
-    # 20,
-    # 3,
-    # ADD,
-    # 2,
-    # 3,
-    # PRINT_REGISTER,
-    # 2,
-    # PRINT_NUM,
-    # 1,
-    # PRINT_NUM,
-    # 12,
-    # PRINT_BEEJ,
-    # PRINT_BEEJ,
-    # PRINT_NUM,
-    # 37,
-    # PRINT_BEEJ,
-    # HALT
-0]*256
+memory=[0]*256
 
 # print(sys.argv)
 mem_pointer=0
@@ -46,10 +23,10 @@ try:
             if value=='':
                 continue
             num=int(value)
-            print(f"{num:08}:{num}")
+            # print(f"{num:08}:{num}")
             memory[mem_pointer]=num
             mem_pointer+=1
-    print("MEM",memory)
+    # print("MEM",memory)
 except FileNotFoundError:
     print("File Not Found")
     sys.exit(2)
