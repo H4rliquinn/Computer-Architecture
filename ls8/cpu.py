@@ -7,7 +7,23 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        memory=[0b00000000]*256
+
+        R0=0b00000000
+        R1=0b00000000
+        R2=0b00000000
+        R3=0b00000000
+        R4=0b00000000
+        R5=0b00000000   # * R5 is reserved as the interrupt mask (IM)
+        R6=0b00000000   # * R6 is reserved as the interrupt status (IS)
+        R7=0b00000000   # * R7 is reserved as the stack pointer (SP)
+        PC=0b00000000   # * `PC`: Program Counter, address of the currently executing instruction
+        IR=0b00000000   # * `IR`: Instruction Register, contains a copy of the currently executing instruction
+        MAR=0b00000000  # * `MAR`: Memory Address Register, holds the memory address we're reading or writing
+        MDR=0b00000000  # * `MDR`: Memory Data Register, holds the value to write or the value just read
+        FL=0b00000000   # * `FL`: Flags, see below
+        
+        
 
     def load(self):
         """Load a program into memory."""
