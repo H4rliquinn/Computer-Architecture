@@ -35,18 +35,34 @@ class CPU:
         """Load a program into memory."""
 
         address = 0
-
+        #COMMANDS
+        HLT=0b00000001
+        BEEJ=0b00011111
+        LDI=0b10000010
+        PRN=0b01000111
+        #REGISTRS
+        R0=0b00000000
         # For now, we've just hardcoded a program:
 
+        # program = [
+        #     # From print8.ls8
+        #     0b00011111, #Beej
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
+
         program = [
-            # From print8.ls8
-            0b00011111, #Beej
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
+            BEEJ,
+            LDI,
+            R0,
+            8,
+            PRN,
+            R0,
+            HLT,
         ]
 
         for instruction in program:
