@@ -91,7 +91,7 @@ class CPU:
             if self.IR==0b00011111:
                 #BEEJ
                 print("Beej!")
-                self.PC+=1
+                # self.PC+=1
             elif self.IR==0b10000010:
                 #LDI
                 self.MAR=self.PC+1
@@ -106,7 +106,7 @@ class CPU:
                 self.registers[operand_a]=operand_b
                 # print("REG",operand_a,operand_b,self.registers)
 
-                self.PC+=3
+                # self.PC+=3
             elif self.IR==0b01000111:
                 #PRN
                 self.MAR=self.PC+1
@@ -115,9 +115,10 @@ class CPU:
 
                 print(self.registers[operand_a])
 
-                self.PC+=2             
+                # self.PC+=2             
             elif self.IR==0b00000001:
                 sys.exit(0)
             else:
                 print("I did not understand that command")
                 sys.exit(1)
+            self.PC+=(self.IR>>6)+1
