@@ -94,10 +94,16 @@ class CPU:
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
-
         if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
+            self.registers[reg_a] += self.registers[reg_b]
+        elif op == "SUB": 
+            self.registers[reg_a] -= self.registers[reg_b]
+        elif op == "MULT":
+            self.registers[reg_a] *= self.registers[reg_b]
+        elif op == "DIV":
+            self.registers[reg_a] /= self.registers[reg_b]
+        elif op == "MOD":
+            self.registers[reg_a] %= self.registers[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -154,7 +160,7 @@ class CPU:
                 self.MAR=self.PC+2
                 self.ram_read()
                 operand_b=self.MDR 
-                self.registers[operand_a]=self.registers[operand_a]*self.registers[operand_b]
+                self.alu('MULT',operand_a,operand_b)
             elif self.IR==0b00000001:
                 sys.exit(0)
             else:
