@@ -6,7 +6,8 @@ PRINT_NUM=3
 SAVE=4 #Save to register
 PRINT_REGISTER=5 #Print val in registers
 ADD=6 #Add 2 registers
-
+PUSH=7
+POP=8
 memory=[0]*256
 
 # print(sys.argv)
@@ -34,6 +35,7 @@ except FileNotFoundError:
 register=[0]*8
 
 pc=0
+SP=7 # Stack pointer
 
 while True:
     command=memory[pc]
@@ -59,6 +61,10 @@ while True:
         reg_b=memory[pc+2]
         register[reg_a]+=register[reg_b]
         pc+=2
+    elif command==PUSH:
+        pass
+    elif command==POP:
+        pass
     else:
         print("I did not understand that command")
         sys.exit(1)
