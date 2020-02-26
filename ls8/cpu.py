@@ -30,8 +30,8 @@ class CPU:
         R4=0b00000100
         IM=0b00000101   # * R5 is reserved as the interrupt mask (IM)
         IS=0b00000110   # * R6 is reserved as the interrupt status (IS)
-        SP=0b00000111   # * R7 is reserved as the stack pointer (SP)
-        self.registers[SP]=256
+        self.SP=0b00000111   # * R7 is reserved as the stack pointer (SP)
+        self.registers[self.SP]=256
 
     def BEEJ(self):
         print("Beej!")
@@ -61,25 +61,24 @@ class CPU:
         self.alu('MULT',operand_a,operand_b)
 
     def PUSH(self):
-        pass
-        # Grab the register argument
-        # reg = memory[pc + 1]
-        # val = register[reg]
-        # # Decrement the SP.
-        # register[SP] -= 1
-        # # Copy the value in the given register to the address pointed to by SP.
-        # memory[register[SP]] = val
-        # pc += 2
+        # Get Value to push
+        self.MAR=self.PC+1
+        self.ram_read()
+        operand_a=self.MDR
+        # Decrement the SP.
+        self.registers[self.SP] -= 1
+        # Copy the value in the given register to the address pointed to by SP
+        self.ram[self.registers[self.SP]] = operand_a
+        
     def POP(self):
-        pass
-        # # Graph the value from the top of the stack
-        # reg = memory[pc + 1]
-        # val = memory[register[SP]]
-        # # Copy the value from the address pointed to by SP to the given register.
-        # register[reg] = val
-        # # Increment SP.
-        # register[SP] += 1
-        # pc += 2
+        # Grab the value from the top of the stack
+        operand_a = self.ram[self.registers[self.SP]]
+        # Copy the value from the address pointed to by SP to the given register.
+        self.MAR=self.PC+1
+        self.MDR=operand_a
+        self.ram_write()
+        # Increment SP.
+        self.registers[self.SP] += 1
 
     def HLT(self):
         sys.exit(0)
@@ -101,7 +100,7 @@ class CPU:
         MUL=0b10100010
         PUSH=0b01000101
         POP=0b01000110
-        
+
         mem_pointer=0
         if len(sys.argv)!=2:
             print("Error: No Filename")
