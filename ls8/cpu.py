@@ -4,7 +4,6 @@ import sys
 
 class CPU:
     """Main CPU class."""
-
     def __init__(self):
         """Construct a new CPU."""
         self.ram=[0b00000000]*256
@@ -13,6 +12,14 @@ class CPU:
         self.MDR=0b00000000  # * `MDR`: Memory Data Register, holds the value to write or the value just read
         self.IR=0b00000000   # * `IR`: Instruction Register, contains a copy of the currently executing instruction
         self.FL=0b00000000   # * `FL`: Flags, see below
+        self.bt={} #Branch Table
+        self.bt[0b00011111]=self.BEEJ
+        self.bt[0b10000010]=self.LDI
+        self.bt[0b01000111]=self.PRN
+        self.bt[0b10100010]=self.MUL
+        self.bt[0b00000001]=self.HLT
+
+        self.registers=[0]*8
         R0=0b00000000
         R1=0b00000001
         R2=0b00000010
@@ -21,8 +28,40 @@ class CPU:
         R5=0b00000101   # * R5 is reserved as the interrupt mask (IM)
         R6=0b00000110   # * R6 is reserved as the interrupt status (IS)
         R7=0b00000111   # * R7 is reserved as the stack pointer (SP)
-        self.registers=[0]*8
+
+    def BEEJ(self):
+        print("Beej!")
+
+    def LDI(self):
+        self.MAR=self.PC+1
+        self.ram_read()
+        operand_a=self.MDR
+        self.MAR=self.PC+2
+        self.ram_read()
+        operand_b=self.MDR
+        self.registers[operand_a]=operand_b
+
+    def PRN(self):
+        self.MAR=self.PC+1
+        self.ram_read()
+        operand_a=self.MDR 
+        print(self.registers[operand_a])
+
+    def MUL(self):
+        self.MAR=self.PC+1
+        self.ram_read()
+        operand_a=self.MDR 
+        self.MAR=self.PC+2
+        self.ram_read()
+        operand_b=self.MDR 
+        self.alu('MULT',operand_a,operand_b)
+    def HLT(self):
+        sys.exit(0)
+
+
         
+        
+ 
     def ram_read(self):
         self.MDR=self.ram[self.MAR]
 
@@ -131,39 +170,40 @@ class CPU:
         """Run the CPU."""
         while True:
             self.IR=self.ram[self.PC]
+            self.bt[self.IR]()
             # print("IR",self.IR)
-            if self.IR==0b00011111:
-                #BEEJ
-                print("Beej!")
-            elif self.IR==0b10000010:
-                #LDI
-                self.MAR=self.PC+1
-                self.ram_read()
-                # print("RAM",self.PC,self.ram[self.PC],self.ram[self.PC+1],self.ram[self.PC+2])
-                operand_a=self.MDR
-                self.MAR=self.PC+2
-                self.ram_read()
-                operand_b=self.MDR
-                self.registers[operand_a]=operand_b
-                # print("REG",operand_a,operand_b,self.registers)
-            elif self.IR==0b01000111:
-                #PRN
-                self.MAR=self.PC+1
-                self.ram_read()
-                operand_a=self.MDR 
-                print(self.registers[operand_a])
-            elif self.IR==0b10100010:
-                #MUL
-                self.MAR=self.PC+1
-                self.ram_read()
-                operand_a=self.MDR 
-                self.MAR=self.PC+2
-                self.ram_read()
-                operand_b=self.MDR 
-                self.alu('MULT',operand_a,operand_b)
-            elif self.IR==0b00000001:
-                sys.exit(0)
-            else:
-                print("I did not understand that command")
-                sys.exit(1)
+            # if self.IR==0b00011111:
+            #     #BEEJ
+            #     print("Beej!")
+            # elif self.IR==0b10000010:
+            #     #LDI
+            #     self.MAR=self.PC+1
+            #     self.ram_read()
+            #     # print("RAM",self.PC,self.ram[self.PC],self.ram[self.PC+1],self.ram[self.PC+2])
+            #     operand_a=self.MDR
+            #     self.MAR=self.PC+2
+            #     self.ram_read()
+            #     operand_b=self.MDR
+            #     self.registers[operand_a]=operand_b
+            #     # print("REG",operand_a,operand_b,self.registers)
+            # elif self.IR==0b01000111:
+            #     #PRN
+            #     self.MAR=self.PC+1
+            #     self.ram_read()
+            #     operand_a=self.MDR 
+            #     print(self.registers[operand_a])
+            # elif self.IR==0b10100010:
+            #     #MUL
+            #     self.MAR=self.PC+1
+            #     self.ram_read()
+            #     operand_a=self.MDR 
+            #     self.MAR=self.PC+2
+            #     self.ram_read()
+            #     operand_b=self.MDR 
+            #     self.alu('MULT',operand_a,operand_b)
+            # elif self.IR==0b00000001:
+            #     sys.exit(0)
+            # else:
+            #     print("I did not understand that command")
+            #     sys.exit(1)
             self.PC+=(self.IR>>6)+1
