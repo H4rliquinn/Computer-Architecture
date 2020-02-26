@@ -17,7 +17,10 @@ class CPU:
         self.bt[0b10000010]=self.LDI
         self.bt[0b01000111]=self.PRN
         self.bt[0b10100010]=self.MUL
+        self.bt[0b01000101]=self.PUSH
+        self.bt[0b01000110]=self.POP
         self.bt[0b00000001]=self.HLT
+
 
         self.registers=[0]*8
         R0=0b00000000
@@ -25,9 +28,10 @@ class CPU:
         R2=0b00000010
         R3=0b00000011
         R4=0b00000100
-        R5=0b00000101   # * R5 is reserved as the interrupt mask (IM)
-        R6=0b00000110   # * R6 is reserved as the interrupt status (IS)
-        R7=0b00000111   # * R7 is reserved as the stack pointer (SP)
+        IM=0b00000101   # * R5 is reserved as the interrupt mask (IM)
+        IS=0b00000110   # * R6 is reserved as the interrupt status (IS)
+        SP=0b00000111   # * R7 is reserved as the stack pointer (SP)
+        self.registers[SP]=256
 
     def BEEJ(self):
         print("Beej!")
@@ -56,6 +60,27 @@ class CPU:
         operand_b=self.MDR 
         self.alu('MULT',operand_a,operand_b)
 
+    def PUSH(self):
+        pass
+        # Grab the register argument
+        # reg = memory[pc + 1]
+        # val = register[reg]
+        # # Decrement the SP.
+        # register[SP] -= 1
+        # # Copy the value in the given register to the address pointed to by SP.
+        # memory[register[SP]] = val
+        # pc += 2
+    def POP(self):
+        pass
+        # # Graph the value from the top of the stack
+        # reg = memory[pc + 1]
+        # val = memory[register[SP]]
+        # # Copy the value from the address pointed to by SP to the given register.
+        # register[reg] = val
+        # # Increment SP.
+        # register[SP] += 1
+        # pc += 2
+
     def HLT(self):
         sys.exit(0)
 
@@ -74,7 +99,9 @@ class CPU:
         LDI=0b10000010
         PRN=0b01000111
         MUL=0b10100010
-
+        PUSH=0b01000101
+        POP=0b01000110
+        
         mem_pointer=0
         if len(sys.argv)!=2:
             print("Error: No Filename")
