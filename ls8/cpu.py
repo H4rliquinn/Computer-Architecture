@@ -93,14 +93,14 @@ class CPU:
     def CALL(self):
         self.registers[self.SP] -= 1
         self.ram[self.registers[self.SP]]=self.PC+2
-        
         self.MAR=self.PC+1
         self.ram_read()
         operand_a=self.MDR
-    
         self.PC=self.registers[operand_a]
+
     def RET(self):
-        pass
+        self.PC=self.ram[self.registers[self.SP]]
+        self.registers[self.SP] += 1
 
     def HLT(self):
         sys.exit(0)
