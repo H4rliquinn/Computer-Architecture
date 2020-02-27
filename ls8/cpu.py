@@ -6,7 +6,7 @@ class CPU:
     """Main CPU class."""
     def __init__(self):
         """Construct a new CPU."""
-        self.ram=[0b00000000]*256
+        self.ram=[0b00000000]*40
         self.PC=0b00000000   # * `PC`: Program Counter, address of the currently executing instruction
         self.MAR=0b00000000  # * `MAR`: Memory Address Register, holds the memory address we're reading or writing
         self.MDR=0b00000000  # * `MDR`: Memory Data Register, holds the value to write or the value just read
@@ -23,15 +23,15 @@ class CPU:
 
 
         self.registers=[0]*8
-        R0=0b00000000
-        R1=0b00000001
+        self.R0=0b00000000
+        self.R1=0b00000001
         R2=0b00000010
         R3=0b00000011
         R4=0b00000100
         IM=0b00000101   # * R5 is reserved as the interrupt mask (IM)
         IS=0b00000110   # * R6 is reserved as the interrupt status (IS)
         self.SP=0b00000111   # * R7 is reserved as the stack pointer (SP)
-        self.registers[self.SP]=256
+        self.registers[self.SP]=40
 
     def BEEJ(self):
         print("Beej!")
@@ -62,21 +62,20 @@ class CPU:
 
     def PUSH(self):
         # Get Value to push
-        self.MAR=self.PC+1
-        self.ram_read()
-        operand_a=self.MDR
+        # print("PC",self.PC,self.PC+1)
+        operand_a=self.registers[self.ram[self.PC+1]]
         # Decrement the SP.
         self.registers[self.SP] -= 1
+        # print("SP",self.registers[self.SP],self.SP,operand_a)
         # Copy the value in the given register to the address pointed to by SP
         self.ram[self.registers[self.SP]] = operand_a
-        
+
     def POP(self):
         # Grab the value from the top of the stack
         operand_a = self.ram[self.registers[self.SP]]
         # Copy the value from the address pointed to by SP to the given register.
-        self.MAR=self.PC+1
-        self.MDR=operand_a
-        self.ram_write()
+        # print("SP",self.registers[self.SP],self.SP,operand_a)
+        self.registers[self.ram[self.PC+1]]=operand_a
         # Increment SP.
         self.registers[self.SP] += 1
 
@@ -163,6 +162,7 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while True:
+            # print(self.ram,self.registers)
             self.MAR=self.PC
             self.ram_read()
             self.IR=self.MDR
