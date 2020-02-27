@@ -73,11 +73,9 @@ class CPU:
         
     def PUSH(self):
         # Get Value to push
-        # print("PC",self.PC,self.PC+1)
         operand_a=self.registers[self.ram[self.PC+1]]
         # Decrement the SP.
         self.registers[self.SP] -= 1
-        # print("SP",self.registers[self.SP],self.SP,operand_a)
         # Copy the value in the given register to the address pointed to by SP
         self.ram[self.registers[self.SP]] = operand_a
 
@@ -85,7 +83,6 @@ class CPU:
         # Grab the value from the top of the stack
         operand_a = self.ram[self.registers[self.SP]]
         # Copy the value from the address pointed to by SP to the given register.
-        # print("SP",self.registers[self.SP],self.SP,operand_a)
         self.registers[self.ram[self.PC+1]]=operand_a
         # Increment SP.
         self.registers[self.SP] += 1
@@ -114,15 +111,6 @@ class CPU:
     def load(self):
         """Load a program into memory."""
 
-        # #COMMANDS
-        # HLT=0b00000001
-        # BEEJ=0b00011111
-        # LDI=0b10000010
-        # PRN=0b01000111
-        # MUL=0b10100010
-        # PUSH=0b01000101
-        # POP=0b01000110
-
         mem_pointer=0
         if len(sys.argv)!=2:
             print("Error: No Filename")
@@ -130,19 +118,14 @@ class CPU:
         try:
             with open(sys.argv[1]) as f:
                 for line in f:
-                    # print(line)
                     comment_split=line.split("#")
                     value=comment_split[0].strip()
-                    # print(value)
                     if value=='':
                         continue
 
                     num=int(value,2)
-                    # num=bin(num)
-                    # print(f"{num:08}:{num}")
                     self.ram[mem_pointer]=num
                     mem_pointer+=1
-            # print("MEM",self.ram)
         except FileNotFoundError:
             print("File Not Found")
             sys.exit(2)
@@ -185,7 +168,6 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while True:
-            # print(self.ram,self.registers)
             self.MAR=self.PC
             self.ram_read()
             self.IR=self.MDR
