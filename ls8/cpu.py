@@ -20,8 +20,8 @@ class CPU:
         self.bt[0b10100000]=self.ADD
         self.bt[0b01000101]=self.PUSH
         self.bt[0b01000110]=self.POP
-        self.bt[0b00000001]=self.CALL
-        self.bt[0b00000001]=self.RET
+        self.bt[0b01010000]=self.CALL
+        self.bt[0b00010001]=self.RET
         self.bt[0b00000001]=self.HLT
 
         self.registers=[0]*8
@@ -89,9 +89,16 @@ class CPU:
         self.registers[self.ram[self.PC+1]]=operand_a
         # Increment SP.
         self.registers[self.SP] += 1
+
     def CALL(self):
-        pass
+        self.registers[self.SP] -= 1
+        self.ram[self.registers[self.SP]]=self.PC+2
+        
+        self.MAR=self.PC+1
+        self.ram_read()
+        operand_a=self.MDR
     
+        self.PC=self.registers[operand_a]
     def RET(self):
         pass
 
@@ -183,4 +190,5 @@ class CPU:
             self.ram_read()
             self.IR=self.MDR
             self.bt[self.IR]()
-            self.PC+=(self.IR>>6)+1
+            if self.IR not in [0b01010000,0b00010001]:
+                self.PC+=(self.IR>>6)+1
