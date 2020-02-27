@@ -17,10 +17,12 @@ class CPU:
         self.bt[0b10000010]=self.LDI
         self.bt[0b01000111]=self.PRN
         self.bt[0b10100010]=self.MUL
+        self.bt[0b10100000]=self.ADD
         self.bt[0b01000101]=self.PUSH
         self.bt[0b01000110]=self.POP
+        self.bt[0b00000001]=self.CALL
+        self.bt[0b00000001]=self.RET
         self.bt[0b00000001]=self.HLT
-
 
         self.registers=[0]*8
         self.R0=0b00000000
@@ -60,6 +62,15 @@ class CPU:
         operand_b=self.MDR 
         self.alu('MULT',operand_a,operand_b)
 
+    def ADD(self):
+        self.MAR=self.PC+1
+        self.ram_read()
+        operand_a=self.MDR 
+        self.MAR=self.PC+2
+        self.ram_read()
+        operand_b=self.MDR 
+        self.alu('ADD',operand_a,operand_b)
+        
     def PUSH(self):
         # Get Value to push
         # print("PC",self.PC,self.PC+1)
@@ -78,6 +89,11 @@ class CPU:
         self.registers[self.ram[self.PC+1]]=operand_a
         # Increment SP.
         self.registers[self.SP] += 1
+    def CALL(self):
+        pass
+    
+    def RET(self):
+        pass
 
     def HLT(self):
         sys.exit(0)
@@ -91,14 +107,14 @@ class CPU:
     def load(self):
         """Load a program into memory."""
 
-        #COMMANDS
-        HLT=0b00000001
-        BEEJ=0b00011111
-        LDI=0b10000010
-        PRN=0b01000111
-        MUL=0b10100010
-        PUSH=0b01000101
-        POP=0b01000110
+        # #COMMANDS
+        # HLT=0b00000001
+        # BEEJ=0b00011111
+        # LDI=0b10000010
+        # PRN=0b01000111
+        # MUL=0b10100010
+        # PUSH=0b01000101
+        # POP=0b01000110
 
         mem_pointer=0
         if len(sys.argv)!=2:
